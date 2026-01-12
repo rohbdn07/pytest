@@ -10,5 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Say Hello Pytest
-        run: echo "Hello Pytest CI"
+      - name: Checkoout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+            python-version: "3.13"
+
+      - name: Install dependdencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+      - name: Run Tests
+        run: |
+            mkdir test_reports
+            pytest \
+                --junitxml=test_reports/report.xml \
+                --html=test_reports/report.html \
+                --self-contained-html
+
+      - name: Upload tests report
+        uses: actions/upload-artifact@v4
+        with: 
+            name: pytest-reports
+            path: test_reports/
+
