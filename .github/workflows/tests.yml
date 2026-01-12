@@ -1,0 +1,14 @@
+name: Pytest CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Say Hello Pytest
+        run: echo "Hello Pytest CI"
