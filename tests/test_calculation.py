@@ -1,4 +1,4 @@
-from calculation import multiple
+from src.calculation import multiple
 
 def test_add():
     assert 2+2 == 3
