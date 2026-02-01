@@ -16,21 +16,6 @@ def upload_to_jira(file_path, issue_key):
     user_email = os.getenv("JIRA_EMAIL")
     api_token = os.getenv("JIRA_API_TOKEN")
 
-    # Diagnostic prints (without revealing values)
-    print("--- Environment Check ---")
-    print(f"JIRA_DOMAIN set: {'Yes' if jira_domain else 'No'}")
-    print(f"JIRA_EMAIL set: {'Yes' if user_email else 'No'}")
-    print(f"JIRA_API_TOKEN set: {'Yes' if api_token else 'No'}")
-    
-    if jira_domain:
-        print(f"JIRA_DOMAIN format check: Starts with https? {'Yes (Check this!)' if jira_domain.startswith('http') else 'No (Good)'}")
-        print(f"JIRA_DOMAIN format check: Ends with slash? {'Yes (Check this!)' if jira_domain.endswith('/') else 'No (Good)'}")
-
-    # Jira API endpoint for attachments
-    url = f"https://{jira_domain}/rest/api/3/issue/{issue_key}/attachments"
-    print(f"Target URL: {url}")
-    print("------------------------")
-
     if not all([jira_domain, user_email, api_token]):
         missing = [name for name, val in [
             ("JIRA_DOMAIN", jira_domain),
@@ -40,29 +25,15 @@ def upload_to_jira(file_path, issue_key):
         print(f"Error: Missing Jira configuration for: {', '.join(missing)}")
         return False
 
+    # Jira API endpoint for attachments
+    url = f"https://{jira_domain}/rest/api/3/issue/{issue_key}/attachments"
+    
     headers = {
         "Accept": "application/json",
         "X-Atlassian-Token": "no-check" # Required by Jira for attachment uploads
     }
 
     auth = HTTPBasicAuth(user_email, api_token)
-
-    # 1. Connectivity/Auth Check
-    print("--- Connectivity Check ---")
-    myself_url = f"https://{jira_domain}/rest/api/3/myself"
-    try:
-        myself_resp = requests.get(myself_url, auth=auth)
-        if myself_resp.status_code == 200:
-            user_data = myself_resp.json()
-            print(f"Auth Success! Logged in as: {user_data.get('displayName')} ({user_data.get('emailAddress')})")
-        else:
-            print(f"Auth Failed! Status: {myself_resp.status_code}")
-            print(f"Response: {myself_resp.text}")
-            return False
-    except Exception as e:
-        print(f"Connectivity error: {e}")
-        return False
-    print("--------------------------")
 
     print(f"Uploading {file_path} to {issue_key}...")
 
@@ -95,14 +66,10 @@ def upload_to_jira(file_path, issue_key):
 
 if __name__ == "__main__":
     # Configuration from environment variables
-    # Priority: Env var > hardcoded default
     JIRA_ISSUE = os.getenv("JIRA_ISSUE")
     
     if not JIRA_ISSUE:
         print("Error: JIRA_ISSUE environment variable is not set.")
-        # Optional: You could still fall back to a default here if you want safety
-        # JIRA_ISSUE = "SCRUM-1" 
-        # exit(1) # Or return
     
     # List of possible locations for the report
     POSSIBLE_REPORTS = [
