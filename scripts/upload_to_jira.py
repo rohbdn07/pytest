@@ -65,6 +65,12 @@ if __name__ == "__main__":
     # Priority: Env var > hardcoded default
     JIRA_ISSUE = os.getenv("JIRA_ISSUE")
     
+    if not JIRA_ISSUE:
+        print("Error: JIRA_ISSUE environment variable is not set.")
+        # Optional: You could still fall back to a default here if you want safety
+        # JIRA_ISSUE = "SCRUM-1" 
+        # exit(1) # Or return
+    
     # List of possible locations for the report
     POSSIBLE_REPORTS = [
         "report.html",
