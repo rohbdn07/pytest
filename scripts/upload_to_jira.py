@@ -47,6 +47,23 @@ def upload_to_jira(file_path, issue_key):
 
     auth = HTTPBasicAuth(user_email, api_token)
 
+    # 1. Connectivity/Auth Check
+    print("--- Connectivity Check ---")
+    myself_url = f"https://{jira_domain}/rest/api/3/myself"
+    try:
+        myself_resp = requests.get(myself_url, auth=auth)
+        if myself_resp.status_code == 200:
+            user_data = myself_resp.json()
+            print(f"Auth Success! Logged in as: {user_data.get('displayName')} ({user_data.get('emailAddress')})")
+        else:
+            print(f"Auth Failed! Status: {myself_resp.status_code}")
+            print(f"Response: {myself_resp.text}")
+            return False
+    except Exception as e:
+        print(f"Connectivity error: {e}")
+        return False
+    print("--------------------------")
+
     print(f"Uploading {file_path} to {issue_key}...")
 
     try:
