@@ -63,7 +63,7 @@ def upload_to_jira(file_path, issue_key):
 if __name__ == "__main__":
     # Configuration from environment variables
     # Priority: Env var > hardcoded default
-    JIRA_ISSUE = os.getenv("JIRA_ISSUE", "SCRUM-1")
+    JIRA_ISSUE = os.getenv("JIRA_ISSUE")
     
     # List of possible locations for the report
     POSSIBLE_REPORTS = [
