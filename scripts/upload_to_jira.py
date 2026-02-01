@@ -16,9 +16,20 @@ def upload_to_jira(file_path, issue_key):
     user_email = os.getenv("JIRA_EMAIL")
     api_token = os.getenv("JIRA_API_TOKEN")
 
+    # Diagnostic prints (without revealing values)
+    print("--- Environment Check ---")
+    print(f"JIRA_DOMAIN set: {'Yes' if jira_domain else 'No'}")
+    print(f"JIRA_EMAIL set: {'Yes' if user_email else 'No'}")
+    print(f"JIRA_API_TOKEN set: {'Yes' if api_token else 'No'}")
+    print("------------------------")
+
     if not all([jira_domain, user_email, api_token]):
-        print("Error: Missing Jira configuration in environment variables.")
-        print("Please ensure JIRA_DOMAIN, JIRA_EMAIL, and JIRA_API_TOKEN are set.")
+        missing = [name for name, val in [
+            ("JIRA_DOMAIN", jira_domain),
+            ("JIRA_EMAIL", user_email),
+            ("JIRA_API_TOKEN", api_token)
+        ] if not val]
+        print(f"Error: Missing Jira configuration for: {', '.join(missing)}")
         return False
 
     # Jira API endpoint for attachments
