@@ -21,6 +21,14 @@ def upload_to_jira(file_path, issue_key):
     print(f"JIRA_DOMAIN set: {'Yes' if jira_domain else 'No'}")
     print(f"JIRA_EMAIL set: {'Yes' if user_email else 'No'}")
     print(f"JIRA_API_TOKEN set: {'Yes' if api_token else 'No'}")
+    
+    if jira_domain:
+        print(f"JIRA_DOMAIN format check: Starts with https? {'Yes (Check this!)' if jira_domain.startswith('http') else 'No (Good)'}")
+        print(f"JIRA_DOMAIN format check: Ends with slash? {'Yes (Check this!)' if jira_domain.endswith('/') else 'No (Good)'}")
+
+    # Jira API endpoint for attachments
+    url = f"https://{jira_domain}/rest/api/3/issue/{issue_key}/attachments"
+    print(f"Target URL: {url}")
     print("------------------------")
 
     if not all([jira_domain, user_email, api_token]):
@@ -31,9 +39,6 @@ def upload_to_jira(file_path, issue_key):
         ] if not val]
         print(f"Error: Missing Jira configuration for: {', '.join(missing)}")
         return False
-
-    # Jira API endpoint for attachments
-    url = f"https://{jira_domain}/rest/api/3/issue/{issue_key}/attachments"
 
     headers = {
         "Accept": "application/json",
